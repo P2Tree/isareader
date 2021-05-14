@@ -97,92 +97,107 @@ oldInputIndex = 0
 while True:
     print("========")
     searchIndex = input("Input a line number(Enter to next, Q/q to quit): ")
+    space = searchIndex.find(" ")
     if searchIndex == 'q' or searchIndex == 'Q':
         exit(0)
-    if not searchIndex:
-        searchIndex = oldInputIndex + 1
-    oldInputIndex = int(searchIndex)
+    elif space != -1:
+        beginIndex = int(searchIndex[:space])
+        endIndex = int(searchIndex[space+1:])
+    elif not searchIndex:
+        beginIndex = oldInputIndex + 1
+        endIndex = beginIndex
+    else:
+        beginIndex = int(searchIndex)
+        endIndex = beginIndex
+    oldInputIndex = endIndex
 
-    searchEncode = list(instrEncode[int(searchIndex)-1])
-
-    instrStr = instrFormat[int(searchIndex)-1]
-    print("InstrFormat: " + instrStr)
+    searchEncode = []
+    for index in range(beginIndex, endIndex+1):
+        searchEncode.append(list(instrEncode[int(index)-1]))
+        print("InstrFormat: " + instrFormat[int(index)-1])
     if isVerbose:
         print("Description Encode: " + str(searchEncode))
 
+    encodeOut = []
     # here come input searchEncode
-    i = 31
-    pre = []
-    bins = ''
-    binEncode = []
-    illegal = False
-    while i > 0:
-        i = i - 1
-        e = searchEncode[i]
-        if len(bins) > 8:
-            binEncode.append(bins[-8:])
-            bins = bins[:-8]
+    for encode in searchEncode:
+        i = 31
+        pre = []
+        bins = ''
+        binEncode = []
+        illegal = False
+        while i > 0:
+            i = i - 1
+            e = encode[i]
+            if len(bins) > 8:
+                binEncode.append(bins[-8:])
+                bins = bins[:-8]
 
-        if e == 'x':
-            print("Warning: Illegal encoding bit: '" + e + "' in " + str(30-i))
-            illegal = True
-            break
+            if e == 'x':
+                print("Warning: Illegal encoding bit: '" + e + "' in " + str(30-i))
+                illegal = True
+                break
 
-        if e != 0 and e != 1:
+            if e != 0 and e != 1:
 
-            if e in operandsEncode:
-                if e in pre:
-                    searchEncode[i] = 0
-                    bins = str(0) + bins
+                if e in operandsEncode:
+                    if e in pre:
+                        encode[i] = 0
+                        bins = str(0) + bins
+                        continue
+
+                    op = operandsEncode[e]
+                    if isVerbose:
+                        print("Value of operand " + e + " is " + str(op))
+                    while True:
+                        if encode[i] != e:
+                            print("Error: Operand encoding out of range")
+                            exit(1)
+
+                        if (op & 0b1) == 0b1:
+                            encode[i] = 1
+                            bins = str(1) + bins
+                        else:
+                            encode[i] = 0
+                            bins = str(0) + bins
+                        op = op >> 1
+                        if op == 0:
+                            break
+                        i = i - 1
+                    pre.append(e)
                     continue
 
-                op = operandsEncode[e]
-                if isVerbose:
-                    print("Value of operand " + e + " is " + str(op))
-                while True:
-                    if searchEncode[i] != e:
-                        print("Error: Operand encoding out of range")
-                        exit(1)
+                else:
+                    print("Error: Unknown operand key")
+                    exit(1)
 
-                    if (op & 0b1) == 0b1:
-                        searchEncode[i] = 1
-                        bins = str(1) + bins
-                    else:
-                        searchEncode[i] = 0
-                        bins = str(0) + bins
-                    op = op >> 1
-                    if op == 0:
-                        break
-                    i = i - 1
-                pre.append(e)
-                continue
+            bins = str(e) + bins
 
-            else:
-                print("Error: Unknown operand key")
-                exit(1)
+        if illegal:
+            continue
 
-        bins = str(e) + bins
+        binEncode.append(bins)
 
-    if illegal:
-        continue
+        hexEncode = []
+        for e in binEncode:
+            hexEncode.append('0x%02X' % int(e, 2))#hex(int(e, 2)))
 
-    binEncode.append(bins)
+        if isVerbose:
+            print("Binary Encode:")
+            print(encode)
+        if printLitCheck:
+            encodeStr = ""
+            for e in hexEncode:
+                encodeStr = encodeStr + "," + e
+            encodeStr = encodeStr[1:]
+            #  print("# CHECK: " + encodeStr)
+            encodeOut.append("# CHECK: " + encodeStr)
+        else:
+            #  print(hexEncode)
+            encodeOut.append(hexEncode)
 
-    hexEncode = []
-    for e in binEncode:
-        hexEncode.append('0x%02X' % int(e, 2))#hex(int(e, 2)))
-
-    if isVerbose:
-        print("Binary Encode:")
-        print(searchEncode)
     print("Hexadecimal Encode:")
-    if printLitCheck:
-        encodeStr = ""
-        for e in hexEncode:
-            encodeStr = encodeStr + "," + e
-        encodeStr = encodeStr[1:]
-        print("# CHECK: " + encodeStr)
-    else:
-        print(hexEncode)
+    for encode in encodeOut:
+        print(encode)
 
 
