@@ -1,0 +1,9 @@
+{
+  "register" : ["Rd", "Rn", "Rm", "Td", "Tn", "Tm", "Tdn", "Pg", "Pd", "Pn", "Pm", "StrideRn"],
+  "operandsEncode" : {"Rd": 0, "Rn": 1, "Rm": 2, "Td": 0, "Tn": 1, "Tm": 2, "Tdn": 0, "Pg": 1, "Pd": 0, "Pn": 1, "Pm": 2,
+        "imm3": 3, "uimm3": 3, "imm4": 4, "uimm4": 4, "imm5": 5, "uimm5": 5, "imm6": 6, "uimm6": 6,
+        "imm8": 8, "uimm8": 8, "imm9": 9, "uimm9": 9, "uimm10": 10, "imm15": 15, "imm16": 16, "imm20": 20,
+        "widthm1": 1, "mode": 1, "StrideRn": 2},
+
+  "excelFileName" : "ISA_status.xlsx"
+}
