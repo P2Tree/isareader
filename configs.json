@@ -5,5 +5,5 @@
         "imm8": 8, "uimm8": 8, "imm9": 9, "uimm9": 9, "uimm10": 10, "imm15": 15, "imm16": 16, "imm20": 20,
         "widthm1": 1, "mode": 1, "StrideRn": 2},
 
-  "excelFileName" : "ISA_status.xlsx"
+  "excelFileName" : "isa example.xlsx"
 }

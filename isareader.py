@@ -15,6 +15,8 @@ def PrintHelp():
     print("  --check      Print encoding information with lit check prefix.")
     print("  -C=filename")
     print("  --configs=filename    Indicate the custom configuration file.")
+    print("  -h")
+    print("  --help       Show help infomation")
 
 # Parse arguments
 isVerbose = False
@@ -33,7 +35,9 @@ if len(sys.argv) != 1:
         elif arg.startswith("-C=") or arg.startswith("--configs="):
             customConfigs = arg[arg.find("=")+1:]
             print(customConfigs)
-
+        elif arg == "-h" or arg == "--help":
+            PrintHelp()
+            exit(0)
         else:
             PrintHelp()
             exit(0)
