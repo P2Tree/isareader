@@ -77,6 +77,7 @@ for index,names in enumerate(sheets):
 selectSheet = input("Select sheet: ")
 table = xml[sheets[int(selectSheet)]]
 
+max_row = table.max_row
 instrFormat = []
 encode = []
 instrEncode = []
@@ -116,11 +117,20 @@ while True:
     oldInputIndex = endIndex
 
     searchEncode = []
+    illegal = False
     for index in range(beginIndex, endIndex+1):
+        if index > max_row:
+            print("Error: input index is out of range of the table.")
+            illegal = True
+            break
         searchEncode.append(list(instrEncode[int(index)-1]))
         print("InstrFormat: " + instrFormat[int(index)-1])
     if isVerbose:
         print("Description Encode: " + str(searchEncode))
+
+    if illegal:
+        continue
+
 
     encodeOut = []
     # here come input searchEncode
@@ -173,7 +183,8 @@ while True:
 
                 else:
                     print("Error: Unknown operand key")
-                    exit(1)
+                    illegal = True
+                    break
 
             bins = str(e) + bins
 
