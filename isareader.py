@@ -204,7 +204,7 @@ while True:
             encodeStr = ""
             for e in hexEncode:
                 encodeStr = encodeStr + "," + e
-            encodeStr = encodeStr[1:]
+            encodeStr = encodeStr[1:].lower()
             #  print("# CHECK: " + encodeStr)
             encodeOut.append("# CHECK: " + encodeStr)
         else:
